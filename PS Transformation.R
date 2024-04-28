@@ -479,4 +479,6 @@ PartyLevel <- ICDATA %>% group_by(family, PARTISAN) %>% dplyr::summarize(Average
                                                                          lrecon_ext = mean(lrecon_ext), galtan_ext = mean(galtan_ext)) %>% filter(family == "RLeft" | family == "Green")
 PartyLevel2 <- ICDATA %>% group_by(family, PARTISAN) %>% dplyr::summarize(AverageEconomy = mean(st.isal_econ), AverageCulture = mean(st.isal_soc),
                                                                           lrecon_sd = mean(lrecon_sd), galtan_sd = mean(galtan_sd)) %>% filter(family == "RLeft" | family == "Green")
+ICDATA3 <- ICDATA %>% filter(!family == "RLeft") %>% filter(!family == "Green")
 
+table(ICDATA3$family)
