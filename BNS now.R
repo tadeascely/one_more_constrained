@@ -1,6 +1,7 @@
-#####
-#LIBRARIES
-#####
+library(NetworkComparisonTest)
+library(qgraph)
+library(bootnet)
+library(patchwork)
 library(kableExtra)
 library(tidyverse)
 library(haven)
@@ -14,12 +15,10 @@ library(patchwork)
 library(magrittr)
 #paste function
 library(stringr)
-#display function - but also replaces select, which I don't like
-#library(arm)
+library(manifestoR)
 
-#####
-#Data upload
-#####
+# Suppress all warnings
+options(warn = -1)
 
 #import CHES
 CHES <- read.csv("C:/Users/tadec/OneDrive - MUNI/GitHub/no_conservative_left/data/1999-2019_CHES_dataset_means(v3).csv")
@@ -56,6 +55,7 @@ ESS8[ESS8 == 66] <- NA
 ESS8[ESS8 == 77] <- NA
 ESS8[ESS8 == 88] <- NA
 ESS8[ESS8 == 99] <- NA
+
 
 #####
 #ESS8: recoding parties and merging with CHES
@@ -314,12 +314,12 @@ ICDATA2 <- DATA
 #OUTCOME VARIABLE
 #####
 ICDATA2 <- ICDATA2 %>% mutate(Blrecon = case_when(lrecon > 5 ~ 1,
-                                             lrecon < 5 ~ -1,
-                                             TRUE ~ NA_real_))
+                                                  lrecon < 5 ~ -1,
+                                                  TRUE ~ NA_real_))
 
 ICDATA2 <- ICDATA2 %>% mutate(Bgaltan = case_when(galtan > 5 ~ 1,
-                                             galtan < 5 ~ -1,
-                                             TRUE ~ NA_real_))
+                                                  galtan < 5 ~ -1,
+                                                  TRUE ~ NA_real_))
 
 #cronbach.alpha(ALL[immig], na.rm = TRUE)
 ICDATA2 %<>% mutate(Immigration = (imdfetn + impcntr + imsmetn)/3)
@@ -327,108 +327,108 @@ ICDATA2 %<>% mutate(Immigration = (imdfetn + impcntr + imsmetn)/3)
 
 
 ICDATA2 %<>% mutate(b.gincdif = case_when(gincdif > mean(gincdif, na.rm = TRUE) ~ 1,
-                                         gincdif < mean(gincdif, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.dfincac = case_when(dfincac > mean(dfincac, na.rm = TRUE) ~ 1,
-                                         dfincac < mean(dfincac, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.smdfslv = case_when(smdfslv > mean(smdfslv, na.rm = TRUE) ~ 1,
-                                         smdfslv < mean(smdfslv, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.gvslvue = case_when(gvslvue > mean(gvslvue, na.rm = TRUE) ~ 1,
-                                         gvslvue < mean(gvslvue, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.sbstrec = case_when(sbstrec > mean(sbstrec, na.rm = TRUE) ~ 1,
-                                         sbstrec < mean(sbstrec, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.sbbsntx = case_when(sbbsntx > mean(sbbsntx, na.rm = TRUE) ~ 1,
-                                         sbbsntx < mean(sbbsntx, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.sblazy = case_when(sblazy > mean(sblazy, na.rm = TRUE) ~ 1,
-                                        sblazy < mean(sblazy, na.rm = TRUE) ~ -1,
-                                        TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.uentrjb = case_when(uentrjb > mean(uentrjb, na.rm = TRUE) ~ 1,
-                                         uentrjb < mean(uentrjb, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.bennent = case_when(bennent > mean(bennent, na.rm = TRUE) ~ 1,
-                                         bennent < mean(bennent, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.lbenent = case_when(lbenent > mean(lbenent, na.rm = TRUE) ~ 1,
-                                         lbenent < mean(lbenent, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.sbprvpv = case_when(sbprvpv > mean(sbprvpv, na.rm = TRUE) ~ 1,
-                                         sbprvpv < mean(sbprvpv, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.gvslvol = case_when(gvslvol > mean(gvslvol, na.rm = TRUE) ~ 1,
-                                         gvslvol < mean(gvslvol, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.gvcldcr = case_when(gvcldcr > mean(gvcldcr, na.rm = TRUE) ~ 1,
-                                         gvcldcr < mean(gvcldcr, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.mnrgtjb = case_when(mnrgtjb > mean(mnrgtjb, na.rm = TRUE) ~ 1,
-                                         mnrgtjb < mean(mnrgtjb, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.freehms = case_when(freehms > mean(freehms, na.rm = TRUE) ~ 1,
-                                         freehms < mean(freehms, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
-
-ICDATA2 %<>% mutate(b.hmsfmlsh = case_when(hmsfmlsh > mean(hmsfmlsh, na.rm = TRUE) ~ 1,
-                                          hmsfmlsh < mean(hmsfmlsh, na.rm = TRUE) ~ -1,
+                                          gincdif < mean(gincdif, na.rm = TRUE) ~ -1,
                                           TRUE ~ 0))
 
-ICDATA2 %<>% mutate(b.hmsacld = case_when(hmsacld > mean(hmsacld, na.rm = TRUE) ~ 1,
-                                         hmsacld < mean(hmsacld, na.rm = TRUE) ~ -1,
+ICDATA2 %<>% mutate(b.dfincac = case_when(dfincac > mean(dfincac, na.rm = TRUE) ~ 1,
+                                          dfincac < mean(dfincac, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.smdfslv = case_when(smdfslv > mean(smdfslv, na.rm = TRUE) ~ 1,
+                                          smdfslv < mean(smdfslv, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.gvslvue = case_when(gvslvue > mean(gvslvue, na.rm = TRUE) ~ 1,
+                                          gvslvue < mean(gvslvue, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.sbstrec = case_when(sbstrec > mean(sbstrec, na.rm = TRUE) ~ 1,
+                                          sbstrec < mean(sbstrec, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.sbbsntx = case_when(sbbsntx > mean(sbbsntx, na.rm = TRUE) ~ 1,
+                                          sbbsntx < mean(sbbsntx, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.sblazy = case_when(sblazy > mean(sblazy, na.rm = TRUE) ~ 1,
+                                         sblazy < mean(sblazy, na.rm = TRUE) ~ -1,
                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.uentrjb = case_when(uentrjb > mean(uentrjb, na.rm = TRUE) ~ 1,
+                                          uentrjb < mean(uentrjb, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.bennent = case_when(bennent > mean(bennent, na.rm = TRUE) ~ 1,
+                                          bennent < mean(bennent, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.lbenent = case_when(lbenent > mean(lbenent, na.rm = TRUE) ~ 1,
+                                          lbenent < mean(lbenent, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.sbprvpv = case_when(sbprvpv > mean(sbprvpv, na.rm = TRUE) ~ 1,
+                                          sbprvpv < mean(sbprvpv, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.gvslvol = case_when(gvslvol > mean(gvslvol, na.rm = TRUE) ~ 1,
+                                          gvslvol < mean(gvslvol, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.gvcldcr = case_when(gvcldcr > mean(gvcldcr, na.rm = TRUE) ~ 1,
+                                          gvcldcr < mean(gvcldcr, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.mnrgtjb = case_when(mnrgtjb > mean(mnrgtjb, na.rm = TRUE) ~ 1,
+                                          mnrgtjb < mean(mnrgtjb, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.freehms = case_when(freehms > mean(freehms, na.rm = TRUE) ~ 1,
+                                          freehms < mean(freehms, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.hmsfmlsh = case_when(hmsfmlsh > mean(hmsfmlsh, na.rm = TRUE) ~ 1,
+                                           hmsfmlsh < mean(hmsfmlsh, na.rm = TRUE) ~ -1,
+                                           TRUE ~ 0))
+
+ICDATA2 %<>% mutate(b.hmsacld = case_when(hmsacld > mean(hmsacld, na.rm = TRUE) ~ 1,
+                                          hmsacld < mean(hmsacld, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
 
 ICDATA2 %<>% mutate(b.imueclt = case_when(imueclt > mean(imueclt, na.rm = TRUE) ~ 1,
-                                         imueclt < mean(imueclt, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
+                                          imueclt < mean(imueclt, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
 
 ICDATA2 %<>% mutate(b.imwbcnt = case_when(imwbcnt > mean(imwbcnt, na.rm = TRUE) ~ 1,
-                                         imwbcnt < mean(imwbcnt, na.rm = TRUE) ~ -1,
-                                         TRUE ~ 0))
+                                          imwbcnt < mean(imwbcnt, na.rm = TRUE) ~ -1,
+                                          TRUE ~ 0))
 
 ICDATA2 %<>% mutate(b.Immigration = case_when(Immigration > mean(Immigration, na.rm = TRUE) ~ 1,
-                                             Immigration < mean(Immigration, na.rm = TRUE) ~ -1,
-                                             TRUE ~ 0))
+                                              Immigration < mean(Immigration, na.rm = TRUE) ~ -1,
+                                              TRUE ~ 0))
 
 
 #Economic issue alignment
 ICDATA2 <- ICDATA2 %>% mutate(isal_econ2 = Blrecon*b.gincdif + Blrecon*b.dfincac +
-                              Blrecon*b.smdfslv + Blrecon*b.gvslvol +Blrecon*b.gvslvue +Blrecon*b.gvcldcr +
-                              Blrecon*b.sbstrec + Blrecon*b.sbprvpv + Blrecon*b.sbbsntx + Blrecon*b.sblazy +
-                              Blrecon*b.uentrjb + Blrecon*b.lbenent + Blrecon*b.bennent)
+                                Blrecon*b.smdfslv + Blrecon*b.gvslvol +Blrecon*b.gvslvue +Blrecon*b.gvcldcr +
+                                Blrecon*b.sbstrec + Blrecon*b.sbprvpv + Blrecon*b.sbbsntx + Blrecon*b.sblazy +
+                                Blrecon*b.uentrjb + Blrecon*b.lbenent + Blrecon*b.bennent)
 
 
 #Cultural issue alignment
 ICDATA2 <- ICDATA2 %>% mutate(isal_soc2 = Bgaltan*b.mnrgtjb + Bgaltan*b.freehms + Bgaltan*b.hmsfmlsh +
-                              Bgaltan*b.hmsacld + Bgaltan*b.imueclt + Bgaltan*b.imwbcnt + Bgaltan*b.Immigration)
+                                Bgaltan*b.hmsacld + Bgaltan*b.imueclt + Bgaltan*b.imwbcnt + Bgaltan*b.Immigration)
 
 #####
 #Robust versions
 #####
 
 ICDATA2 <- ICDATA2 %>% mutate(ROBisal_econ = Blrecon*b.gvslvue + Blrecon*b.sbstrec + Blrecon*b.sbbsntx + Blrecon*b.sblazy +
-                              Blrecon*b.uentrjb + Blrecon*b.bennent)
+                                Blrecon*b.uentrjb + Blrecon*b.bennent)
 ICDATA2 <- ICDATA2 %>% mutate(st.ROBisal_econ = scale(ROBisal_econ))
 ICDATA2 <- ICDATA2 %>% mutate(ROB1isal_soc = Bgaltan*b.Immigration + Bgaltan*b.imueclt + Bgaltan*b.imwbcnt)
 ICDATA2 <- ICDATA2 %>% mutate(st.ROB1isal_soc = scale(ROB1isal_soc))
 ICDATA2 <- ICDATA2 %>% mutate(ROB2isal_soc = Bgaltan*b.mnrgtjb + Bgaltan*b.freehms  + Bgaltan*b.hmsfmlsh +
-                              Bgaltan*b.hmsacld)
+                                Bgaltan*b.hmsacld)
 ICDATA2 <- ICDATA2 %>% mutate(st.ROB2isal_soc = scale(ROB2isal_soc))
 
 
@@ -465,38 +465,6 @@ ICDATA2 %<>% mutate(r.polintr = -1*polintr+5)
 
 
 ALL <- ICDATA2
-
-
-
-
-
-#EFFECTIVE NUMBER OF PARTIES - Comparative Political Data Set Upload
-CPDS <- read_dta("CPDS_1960-2020_Update_2022.dta")
-CPDScountries <- c(3, 8, 13, 10, 32, 11, 12, 35, 15, 17, 24, 27, 28, 33, 31)
-CPDS %<>% subset(countryn %in% CPDScountries)
-CPDS2016 <- CPDS %>% subset(year == 2016)
-CPDS2016 %<>% mutate(cntry = case_when(countryn == 3 ~ "BE",
-                                       countryn == 8 ~ "CZ",
-                                       countryn == 13 ~ "DE",
-                                       countryn == 10 ~ "EE",
-                                       countryn == 32 ~ "ES",
-                                       countryn == 11 ~ "FI",
-                                       countryn == 12 ~ "FR",
-                                       countryn == 35 ~ "GB",
-                                       countryn == 15 ~ "HU",
-                                       countryn == 17 ~ "IE",
-                                       countryn == 24 ~ "NL",
-                                       countryn == 27 ~ "PL",
-                                       countryn == 28 ~ "PT",
-                                       countryn == 33 ~ "SE",
-                                       countryn == 31 ~ "SI"))
-
-CPDS2016 %<>% dplyr::select(effpar_ele, cntry)
-
-#with CPDS predictors
-ALL <- merge(ICDATA2, CPDS2016, by = "cntry")
-#rm(CPDS, CPDS2016, ICDATA2)
-
 #education
 ed <- ALL$eisced
 ed[ed > 54] <- NA
@@ -506,13 +474,6 @@ ALL$eisced <- ed
 gen <- ALL$gndr
 gen[gen > 2] <- NA
 ALL$gndr <- gen
-
-#center effective number of parties
-#ALL <- ALL %>% mutate(c.effpar_ele = effpar_ele - mean(effpar_ele))
-
-#Party Polarization Centered
-#ALL <- ALL %>% mutate(c.PPEcon = DaltonPPEcon - mean(DaltonPPEcon))
-#ALL <- ALL %>% mutate(c.PPSoc = DaltonPPSoc - mean(DaltonPPSoc))
 
 ALL %<>% mutate(charfamily = case_when(family == 1 ~  "RADRT",
                                        family == 2 ~  "CON",
@@ -536,184 +497,142 @@ ALL %<>% mutate(st.isal_econ = scale(isal_econ2))
 ALL %<>% mutate(st.isal_soc = scale(isal_soc2))
 
 
-#ALL$charfamily <- factor(ALL$charfamily, levels = c("RADRT", "CON", "CD", "LIB",
-#                                                    "SOC", "GREEN", "RADLEFT"))
+ALL$charfamily <- factor(ALL$charfamily, levels = c("RADRT", "CON", "CD", "LIB",
+                                                    "SOC", "GREEN", "RADLEFT"))
 
+source("PS Transformation.R")
+
+RADRT <- ICDATA %>% filter(family == "RR")
+RADLEFT <- ICDATA %>% filter(family == "RLeft")
+GREEN <- ICDATA %>% filter(family == "Green")
+CON <- ICDATA %>% filter(family == "Cons")
+LIB <- ICDATA %>% filter(family == "Lib")
+SOC <- ICDATA %>% filter(family == "Soc")
+CD <- ICDATA %>% filter(family == "ChristDem")
+
+
+Network_RADRT <- estimateNetwork(RADRT[all_att], default = "EBICglasso", corMethod = "spearman")
+Network_RADLEFT <- estimateNetwork(RADLEFT[all_att], default = "EBICglasso", corMethod = "spearman")
+Network_GREEN <- estimateNetwork(GREEN[all_att], default = "EBICglasso", corMethod = "spearman")
+Network_CON <- estimateNetwork(CON[all_att], default = "EBICglasso", corMethod = "spearman")
+Network_LIB <- estimateNetwork(LIB[all_att], default = "EBICglasso", corMethod = "spearman")
+Network_SOC <- estimateNetwork(SOC[all_att], default = "EBICglasso", corMethod = "spearman")
+Network_CD <- estimateNetwork(CD[all_att], default = "EBICglasso", corMethod = "spearman")
+
+
+GREEN_CON <- NCT(Network_GREEN, Network_CON,
+                 it = 1000,
+                 progressbar = TRUE, abs = FALSE)
+#RADRT_CON
+
+#GLOBAL EXPECTED INFLUENCE INVARIANCE TEST 
+#Global expected influence per group:  5.223707 6.221247 
+#Test statistic S:  0.9975401 
+#p-value 0.047 
+
+
+GREEN_LIB <- NCT(Network_GREEN, Network_LIB,
+                 it = 1000,
+                 progressbar = TRUE, abs = FALSE)
+#RADRT_LIB
+
+#GLOBAL EXPECTED INFLUENCE INVARIANCE TEST 
+#Global expected influence per group:  5.223707 6.762832 
+#Test statistic S:  1.539126 
+#p-value 0 
+
+
+
+GREEN_SOC <- NCT(Network_GREEN, Network_SOC,
+                 it = 1000,
+                 progressbar = TRUE, abs = FALSE)
+#RADRT_SOC
+
+#GLOBAL EXPECTED INFLUENCE INVARIANCE TEST 
+#Global expected influence per group:  5.223707 7.180944 
+#Test statistic S:  1.957238 
+#p-value 0
+
+
+GREEN_CD <- NCT(Network_GREEN, Network_CD,
+                it = 1000,
+                progressbar = TRUE, abs = FALSE)
+
+#RADRT_CD
+
+#GLOBAL STRENGTH INVARIANCE TEST 
+#Global strength per group:  5.223707 5.702582 
+#Test statistic S:  0.4788758 
+#p-value 0.299 
+
+
+GREEN_RADRT <- NCT(Network_GREEN, Network_RADRT,
+                   it = 1000,
+                   progressbar = TRUE, abs = FALSE)
+
+
+#OTHER PARTIES COMPARISONS
 #####
-#MODELS
-#####
+#CON, LIB, SOC, CD, RADRT
+Main1 <- NCT(Network_CON, Network_CD,
+             it = 1000,
+             progressbar = TRUE, abs = FALSE)
 
-#Radical Right Exceptionalism
-FE <- lmer(st.isal_econ ~ r.polintr + gndr + eisced + charfamily + (1 | cntry:PARTISAN), data=ALL)
-FEP <- plot_model(FE, type = "pred", terms="charfamily [all]", axis.title = c("Party Family", "Partisan Issue Alignment"),
-          title = "Economic", show.p = TRUE, pred.labels = c("a", "b")) + ylim(-2, 2) + coord_flip()
+#Main1
 
-FS <- lmer(st.isal_soc ~ r.polintr + gndr + eisced + charfamily + (1 | cntry:PARTISAN), data=ALL)
-FES <- plot_model(FS, type = "pred", terms="charfamily [all]", axis.title = c("", "Partisan Issue Alignment"),
-           title = "Sociocultural") + ylim(-2, 2) + coord_flip()
+Main2 <- NCT(Network_CON, Network_LIB,
+             it = 1000,
+             progressbar = TRUE, abs = FALSE)
 
-svg("families.svg", height = 4, width = 8)
-FEP+FES
-dev.off()
+#Main2
 
-#Party polarization
-#M1 <- lmer(st.isal_econ ~ r.polintr + gndr + eisced + DaltonPPEcon + (1 | cntry:PARTISAN), data=ALL)
-#arm::display(M1)
+Main3 <- NCT(Network_CON, Network_SOC,
+             it = 1000,
+             progressbar = TRUE, abs = FALSE)
 
-#M1P <- plot_model(M1, type = "pred", terms="DaltonPPEcon [all]", axis.title = c("Party System Polarization", "Partisan Issue Alignment"),
-#                  title = "Sociocultural") + ylim(-2, 2)
-#M1P + geom_histogram(data = ALL, inherit.aes = FALSE, aes(x = DaltonPPEcon, y = ..count../1000),
-#                     fill = "gray70", colour = "gray60", alpha = 0.25, position = position_nudge(y = -2), binwidth = 0.1)
+#Main3
 
-#M2 <- lmer(st.isal_soc ~ r.polintr + gndr + eisced + DaltonPPSoc + (1 | cntry:PARTISAN), data=ALL)
-#M2P <- plot_model(M2, type = "pred", terms="DaltonPPSoc [all]", axis.title = c("Party System Polarization", "Partisan Issue Alignment"),
-#                 title = "Sociocultural") + ylim(-2, 2)
+Main4 <- NCT(Network_CD, Network_LIB,
+             it = 1000,
+             progressbar = TRUE, abs = FALSE)
 
+#Main4
 
+Main5 <- NCT(Network_CD, Network_SOC,
+             it = 1000,
+             progressbar = TRUE, abs = FALSE)
 
-######
-#use this later for appendix
-tab_model(M1,M2, M1int, M2int, ME, MS,
-          dv.labels = c("Party Polarization (econ)", "Party Polarization (soc)", "Only Attentive (econ)", "Only Attentive (econ)", "Party Families (econ)", "Party Families (soc)"),
-          p.style = "stars",
-          show.ngroups = FALSE,
-          show.icc = FALSE,
-          show.obs = TRUE,
-          string.pred = "Coefficient",
-          string.ci = "Conf. Int (95%)",
-          collapse.ci = TRUE,
-          pred.labels = c("Intercept", "Interest in Politics", "Female", "Education",
-                          "Party Polarization (econ)", "Party Polarization (soc)", "Interest * PP(econ)",
-                          "Interest * PP(soc)", "Green", "Radical Left", "Radical Right"),
-          file = "table3.html")
+#Main5
 
+Main6 <- NCT(Network_LIB, Network_SOC,
+             it = 1000,
+             progressbar = TRUE, abs = FALSE)
 
-#Popu-list, Parlgov
-#Data upload and merging
-party <- read.csv("party.csv")
-populist <- read.csv("populist-version-2-20200626.csv", sep = ";")
-party <- party %>% subset(chess %in% ALL$party_id)
-exclude_doubles <- c("SPa+Spi", "PRL", "VU", "CDU+CSU", "B90/Gru", "PR", "RPR", "CNIP", "MR", "CD", "CDP", "ARP", "CHU", "KVP", "DS70", "Lib", "Fi-MPSz")
-party %<>% filter(!party_name_short %in% exclude_doubles)
-PART <- left_join(party, populist, by=c("party_id"="parlgov_id"))
-POPPART <- merge(PART, ALL, by.x = "chess", by.y = "party_id")
+#Main6
 
-#Vector transformations
-POPPART %<>% mutate(populist = case_when(populist == 1 ~ 1,
-                                         TRUE ~ 0))
-POPPART$populist <- as.factor(POPPART$populist)
-POPPART %<>% mutate(farright = case_when(farright == 1 ~ 1,
-                                         TRUE ~ 0))
-POPPART$farright <- as.factor(POPPART$farright)
-POPPART %<>% mutate(farleft = case_when(farleft == 1 ~ 1,
-                                         TRUE ~ 0))
-POPPART$farleft <- as.factor(POPPART$farleft)
+Main7 <- NCT(Network_RADRT, Network_CON,
+             it = 1000,
+             progressbar = TRUE, abs = FALSE)
 
-#Models
-POPS2 <- lmer(st.isal_soc ~ r.polintr + gndr + eisced + populist + farright + farleft + eastwest + PSI + c.PPSoc + (1 | cntry:PARTISAN), data=POPPART)
-plot_model(POPS2, type = "est")
-arm::display(POPS2)
+#Main7
 
-POPE2 <- lmer(st.isal_econ ~ r.polintr + gndr + eisced + populist + farright + farleft + eastwest + PSI + c.PPEcon + (1 | cntry:PARTISAN), data=POPPART)
-plot_model(POPE2, type = "est")
-arm::display(POPE2)
+Main8 <- NCT(Network_RADRT, Network_LIB,
+             it = 1000,
+             progressbar = TRUE, abs = FALSE)
 
-popsoc1 <- plot_model(POPS2, type = "pred", dot.size = 3, line.size = 1, terms = "farright", show.legend = FALSE, title = "Sociocultural: Far right", axis.title = c("",""))
-popsoc2 <- plot_model(POPS2, type = "pred", dot.size = 3, line.size = 1, terms = "farleft", show.legend = FALSE, title = "Sociocultural: Far left", axis.title = c("",""))
-popecon1 <- plot_model(POPE2, type = "pred", dot.size = 3, line.size = 1, terms = "farright", show.legend = FALSE, title = "Economic: Far right", axis.title = c("",""))
-popecon2 <- plot_model(POPE2, type = "pred", dot.size = 3, line.size = 1, terms = "farleft", show.legend = FALSE, title = "Economic: Far left", axis.title = c("",""))
+#Main8
 
-svg("combined_pred.svg")
-popsoc1 + popsoc2 + popecon1 + popecon2 + plot_layout(ncol = 2)
-dev.off()
+Main9 <- NCT(Network_RADRT, Network_SOC,
+             it = 1000,
+             progressbar = TRUE, abs = FALSE)
 
-#Party age... not really anything in there
-#load("data_ipod.rdata")
-#IPOD <- data_ipod %>% filter(year == 2013)
-#IPOD %<>% dplyr::select(year.foundation, chess)
-#PARTlong <- merge(IPOD, ALL, by.x = "chess", by.y = "party_id")
-#PARTlong %<>% mutate(partyage.dec = (2013 - year.foundation)/10)
-#PARTlong %<>% mutate(newparty = case_when(partyage.dec < 2 ~ 1,
-#                                          TRUE ~ 0))
-#LONGE2 <- lmer(isal_econ2 ~ r.polintr + gndr + eisced + partyage.dec + PSI + c.PPEcon + prtdgcl + (1 | cntry:PARTISAN), data=PARTlong)
-#plot_model(LONGE2, type = "est")
-#arm::display(LONGE2)
+#Main9
 
-#LONGS2 <- lmer(isal_soc2 ~ r.polintr + gndr + eisced + partyage.dec + PSI + c.PPSoc + prtdgcl + (1 | cntry:PARTISAN), data=PARTlong)
-#plot_model(LONGS2, type = "est")
-#arm::display(LONGS2)
+Main10 <- NCT(Network_RADRT, Network_CD,
+              it = 1000,
+              progressbar = TRUE, abs = TRUE)
 
-#Most important issue (exploration)
-#ALL %<>% mutate(party_type = case_when(mip_one == 13 | mip_one == 14 ~ "Mainstream",
-#                                       mip_one == 1 | mip_one == 12 | mip_one == 22 | mip_one == 16 ~ "Radical Right",
-#                                       mip_one == 6 ~ "Green",
-#                                       TRUE ~ NA_character_))
-#length(unique(ALL$PARTISAN))
+#Main10
 
-#EXPLORATION
-#exp <- ALL %>% group_by(cntry) %>% dplyr::summarize(mean(st.isal_econ, na.rm = TRUE), mean(c.PPEcon, na.rm = TRUE))
-#ALL %$% cor(st.isal_econ, c.PPEcon, use="complete.obs")
-#summary(ALL$gincdif)
-#tab1 <- ALL %>% group_by(lrecon, galtan) %>% dplyr::summarize(mean(isal_econ, na.rm = TRUE))
-#ggplot(tab1, aes(lrecon, `mean(isal_econ, na.rm = TRUE)`)) + geom_point()
-#ggplot(tab1, aes(galtan, `mean(isal_econ, na.rm = TRUE)`)) + geom_point()
-
-#tab2 <- ALL %>% group_by(lrecon, galtan) %>% dplyr::summarize(mean(isal_soc, na.rm = TRUE))
-#ggplot(tab2, aes(lrecon, `mean(isal_soc, na.rm = TRUE)`)) + geom_point()
-#ggplot(tab2, aes(galtan, `mean(isal_soc, na.rm = TRUE)`)) + geom_point()
-
-
-#2D Descriptives
-library(ggrepel)
-
-#Party polarization 2D density
-#PolarPar <- ALL %>% group_by(cntry) %>% dplyr::summarize(Econ = mean(DaltonPPEcon), Soc = mean(DaltonPPSoc))
-#PartEcon <- ggplot(PolarPar, aes(Econ)) + geom_density(fill = "blue", alpha = 0.1) + xlab("Party Polarization on Left-Right Axis")
-#PartSoc <- ggplot(PolarPar, aes(Soc)) + geom_density(fill = "red", alpha = 0.1) + xlab("Party Polarization on GAL-TAN Axis")
-#PartyPOl <- ggplot(PolarPar, aes(Econ, Soc)) + stat_density2d(aes(colour = ..level..)) + geom_text_repel(aes(label = cntry), size = 4)
- 
-#svg("party_pol.svg", width = 10, height = 6)
-#PartyPOl
-#dev.off()
-
-#2D plots
-PartDens <- ICDATA %>% dplyr::group_by(PARTISAN) %>% dplyr::summarize(EconExt = mean(lrecon_ext), SocExt = mean(galtan_ext), EconSD = mean(lrecon_sd), SocSD = mean(galtan_sd))
-
-#Position Extremity 2D Density
-PartyExt <- ggplot(PartDens, aes(EconExt, SocExt)) + stat_density2d(aes(alpha = ..density..), geom = "tile", contour = FALSE)  +  geom_label_repel(aes(label = PARTISAN), size = 3, max.overlaps = 10)
-
-svg("party_ext.svg", width = 12, height = 8)
-PartyExt
-dev.off()
-
-#Position blurring 2D Density
-PartySD <- ggplot(PartDens, aes(EconSD, SocSD)) + stat_density2d(aes(alpha = ..density..), geom = "tile", contour = FALSE)  +  geom_label_repel(aes(label = PARTISAN), size = 3, max.overlaps = 20)
-
-svg("party_sd.svg", width = 12, height = 8)
-PartySD
-dev.off()
-
-#Nicheness
-#Nicheness <- nichDATA2 %>% dplyr::group_by(PARTISAN) %>% dplyr::summarize(nicheness = mean(nicheness))
-#ggplot(Nicheness, aes(nicheness)) + geom_density(fill = "blue", alpha = 0.1)
-
-#Excluding Hungary as a clear outlier does not change the result
-#excHung <- ALL %>% filter(cntry != "HU")
-
-#M1H <- lmer(st.isal_econ ~ r.polintr + gndr + eisced + c.PPEcon + (1 | cntry:PARTISAN), data=excHung)
-#M2H <- lmer(st.isal_soc ~ r.polintr + gndr + eisced + c.PPSoc + (1 | cntry:PARTISAN), data=excHung)
-#tab_model(M1H, M2H)
-
-
-
-
-
-#Government experience
-
-#GOV_EXP <- CHES %>% group_by(party_id) %>% dplyr::summarize(gov = sum(govt, na.rm = TRUE))
-
-#GOV_EXP %<>% filter(parl < 1)
-#GOV_EXP %<>% mutate(government = case_when(gov == 0 ~ "No Government Experience",
-#                                           TRUE ~ "Government Experience"))
-#GOV_EXP %<>% subset(party_id %in% ALL$party_id)
-#ALL <- merge(ALL, GOV_EXP, by = "party_id", all.x = FALSE, all.y = FALSE)
+# Reset warning to default (typically 0)
+options(warn = 0)
