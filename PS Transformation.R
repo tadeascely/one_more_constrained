@@ -461,11 +461,11 @@ ICDATA %<>% mutate(PI = abs(lrecon-galtan))
 #####
 #DV: DENSITY
 #####
-DEN <- ALL %>% dplyr::select(st.isal_econ, st.isal_soc)
+DEN <- DATAFIN %>% dplyr::select(st.isal_econ, st.isal_soc)
 DEN2 <- reshape2::melt(DEN)
 
 #Multiple density plots
-density <- ggplot(DEN2,aes(x=value, fill=variable)) + geom_density(alpha=0.5, adjust = 1.5) + xlim(-3, 3) + 
+density <- ggplot(DEN2,aes(x=value, fill=variable)) + geom_density(alpha=0.5, adjust = 2) + xlim(-3, 3) + 
   scale_fill_discrete(labels = c("Economic", "Sociocultural")) +  labs(fill = "Ideological Axis") +
   theme(legend.text = element_text(size = 12), legend.title = element_text(size = 13, face = "bold"), axis.title = element_text(size = 12),
         axis.text = element_text(size = 11))
@@ -475,10 +475,3 @@ svg("Figures/density.svg", height = 5, width = 7, family = "serif")
 density + scale_fill_brewer(palette="Greys", labels = c("Economic", "Sociocultural")) + theme_classic()
 dev.off()
 
-PartyLevel <- ICDATA %>% group_by(family, PARTISAN) %>% dplyr::summarize(AverageEconomy = mean(st.isal_econ), AverageCulture = mean(st.isal_soc),
-                                                                         lrecon_ext = mean(lrecon_ext), galtan_ext = mean(galtan_ext)) %>% filter(family == "RLeft" | family == "Green")
-PartyLevel2 <- ICDATA %>% group_by(family, PARTISAN) %>% dplyr::summarize(AverageEconomy = mean(st.isal_econ), AverageCulture = mean(st.isal_soc),
-                                                                          lrecon_sd = mean(lrecon_sd), galtan_sd = mean(galtan_sd)) %>% filter(family == "RLeft" | family == "Green")
-ICDATA3 <- ICDATA %>% filter(!family == "RLeft") %>% filter(!family == "Green")
-
-table(ICDATA3$family)

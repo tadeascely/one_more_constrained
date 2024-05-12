@@ -471,30 +471,30 @@ ALL <- ICDATA2
 
 
 #EFFECTIVE NUMBER OF PARTIES - Comparative Political Data Set Upload
-CPDS <- read_dta("CPDS_1960-2020_Update_2022.dta")
-CPDScountries <- c(3, 8, 13, 10, 32, 11, 12, 35, 15, 17, 24, 27, 28, 33, 31)
-CPDS %<>% subset(countryn %in% CPDScountries)
-CPDS2016 <- CPDS %>% subset(year == 2016)
-CPDS2016 %<>% mutate(cntry = case_when(countryn == 3 ~ "BE",
-                                       countryn == 8 ~ "CZ",
-                                       countryn == 13 ~ "DE",
-                                       countryn == 10 ~ "EE",
-                                       countryn == 32 ~ "ES",
-                                       countryn == 11 ~ "FI",
-                                       countryn == 12 ~ "FR",
-                                       countryn == 35 ~ "GB",
-                                       countryn == 15 ~ "HU",
-                                       countryn == 17 ~ "IE",
-                                       countryn == 24 ~ "NL",
-                                       countryn == 27 ~ "PL",
-                                       countryn == 28 ~ "PT",
-                                       countryn == 33 ~ "SE",
-                                       countryn == 31 ~ "SI"))
+#CPDS <- read_dta("CPDS_1960-2020_Update_2022.dta")
+#CPDScountries <- c(3, 8, 13, 10, 32, 11, 12, 35, 15, 17, 24, 27, 28, 33, 31)
+#CPDS %<>% subset(countryn %in% CPDScountries)
+#CPDS2016 <- CPDS %>% subset(year == 2016)
+#CPDS2016 %<>% mutate(cntry = case_when(countryn == 3 ~ "BE",
+#                                       countryn == 8 ~ "CZ",
+#                                       countryn == 13 ~ "DE",
+#                                       countryn == 10 ~ "EE",
+#                                       countryn == 32 ~ "ES",
+#                                       countryn == 11 ~ "FI",
+#                                       countryn == 12 ~ "FR",
+#                                       countryn == 35 ~ "GB",
+#                                       countryn == 15 ~ "HU",
+#                                       countryn == 17 ~ "IE",
+#                                       countryn == 24 ~ "NL",
+#                                       countryn == 27 ~ "PL",
+#                                      countryn == 28 ~ "PT",
+#                                       countryn == 33 ~ "SE",
+#                                       countryn == 31 ~ "SI"))
 
-CPDS2016 %<>% dplyr::select(effpar_ele, cntry)
+#CPDS2016 %<>% dplyr::select(effpar_ele, cntry)
 
 #with CPDS predictors
-ALL <- merge(ICDATA2, CPDS2016, by = "cntry")
+#ALL <- merge(ICDATA2, CPDS2016, by = "cntry")
 #rm(CPDS, CPDS2016, ICDATA2)
 
 #education
@@ -590,8 +590,8 @@ tab_model(M1,M2, M1int, M2int, ME, MS,
 
 #Popu-list, Parlgov
 #Data upload and merging
-party <- read.csv("party.csv")
-populist <- read.csv("populist-version-2-20200626.csv", sep = ";")
+party <- read.csv("C:/Users/tadec/OneDrive - MUNI/GitHub/no_conservative_left/data/party.csv")
+populist <- read.csv("C:/Users/tadec/OneDrive - MUNI/GitHub/no_conservative_left/data/populist-version-2-20200626.csv", sep = ";")
 party <- party %>% subset(chess %in% ALL$party_id)
 exclude_doubles <- c("SPa+Spi", "PRL", "VU", "CDU+CSU", "B90/Gru", "PR", "RPR", "CNIP", "MR", "CD", "CDP", "ARP", "CHU", "KVP", "DS70", "Lib", "Fi-MPSz")
 party %<>% filter(!party_name_short %in% exclude_doubles)
@@ -610,20 +610,20 @@ POPPART %<>% mutate(farleft = case_when(farleft == 1 ~ 1,
 POPPART$farleft <- as.factor(POPPART$farleft)
 
 #Models
-POPS2 <- lmer(st.isal_soc ~ r.polintr + gndr + eisced + populist + farright + farleft + eastwest + PSI + c.PPSoc + (1 | cntry:PARTISAN), data=POPPART)
-plot_model(POPS2, type = "est")
-arm::display(POPS2)
+POPS2 <- lmer(st.isal_soc ~ r.polintr + gndr + eisced + populist + farright + farleft + eastwest + (1 | cntry:PARTISAN), data=POPPART)
+#plot_model(POPS2, type = "est")
+#arm::display(POPS2)
 
-POPE2 <- lmer(st.isal_econ ~ r.polintr + gndr + eisced + populist + farright + farleft + eastwest + PSI + c.PPEcon + (1 | cntry:PARTISAN), data=POPPART)
-plot_model(POPE2, type = "est")
-arm::display(POPE2)
+POPE2 <- lmer(st.isal_econ ~ r.polintr + gndr + eisced + populist + farright + farleft + eastwest + (1 | cntry:PARTISAN), data=POPPART)
+#plot_model(POPE2, type = "est")
+#arm::display(POPE2)
 
-popsoc1 <- plot_model(POPS2, type = "pred", dot.size = 3, line.size = 1, terms = "farright", show.legend = FALSE, title = "Sociocultural: Far right", axis.title = c("",""))
-popsoc2 <- plot_model(POPS2, type = "pred", dot.size = 3, line.size = 1, terms = "farleft", show.legend = FALSE, title = "Sociocultural: Far left", axis.title = c("",""))
-popecon1 <- plot_model(POPE2, type = "pred", dot.size = 3, line.size = 1, terms = "farright", show.legend = FALSE, title = "Economic: Far right", axis.title = c("",""))
-popecon2 <- plot_model(POPE2, type = "pred", dot.size = 3, line.size = 1, terms = "farleft", show.legend = FALSE, title = "Economic: Far left", axis.title = c("",""))
+popsoc1 <- plot_model(POPS2, type = "pred", dot.size = 3, line.size = 1, terms = "farright", show.legend = FALSE, title = "Sociocultural: Far right", axis.title = c("",""), colors = "black") + theme_classic()
+popsoc2 <- plot_model(POPS2, type = "pred", dot.size = 3, line.size = 1, terms = "farleft", show.legend = FALSE, title = "Sociocultural: Far left", axis.title = c("",""), colors = "black") + theme_classic()
+popecon1 <- plot_model(POPE2, type = "pred", dot.size = 3, line.size = 1, terms = "farright", show.legend = FALSE, title = "Economic: Far right", axis.title = c("",""), colors = "black") + theme_classic()
+popecon2 <- plot_model(POPE2, type = "pred", dot.size = 3, line.size = 1, terms = "farleft", show.legend = FALSE, title = "Economic: Far left", axis.title = c("",""), colors = "black") + theme_classic()
 
-svg("combined_pred.svg")
+svg("Figures/populism.svg")
 popsoc1 + popsoc2 + popecon1 + popecon2 + plot_layout(ncol = 2)
 dev.off()
 
@@ -677,19 +677,21 @@ library(ggrepel)
 #dev.off()
 
 #2D plots
-PartDens <- ICDATA %>% dplyr::group_by(PARTISAN) %>% dplyr::summarize(EconExt = mean(lrecon_ext), SocExt = mean(galtan_ext), EconSD = mean(lrecon_sd), SocSD = mean(galtan_sd))
+PartDens <- ICDATA %>% dplyr::group_by(PARTISAN) %>% dplyr::summarize(Economic = mean(lrecon), Sociocultural = mean(galtan), EconSD = mean(lrecon_sd), SocSD = mean(galtan_sd))
 
 #Position Extremity 2D Density
-PartyExt <- ggplot(PartDens, aes(EconExt, SocExt)) + stat_density2d(aes(alpha = ..density..), geom = "tile", contour = FALSE)  +  geom_label_repel(aes(label = PARTISAN), size = 3, max.overlaps = 10)
+Positions <- ggplot(PartDens, aes(Economic, Sociocultural)) + stat_density2d(aes(alpha = ..density..), geom = "tile", contour = FALSE, show.legend = FALSE)  +  ggrepel::geom_label_repel(aes(label = PARTISAN), size = 3, max.overlaps = 10)
 
-svg("party_ext.svg", width = 12, height = 8)
-PartyExt
+svg("Figures/Positions2D.svg", width = 12, height = 8)
+Positions
 dev.off()
 
-#Position blurring 2D Density
-PartySD <- ggplot(PartDens, aes(EconSD, SocSD)) + stat_density2d(aes(alpha = ..density..), geom = "tile", contour = FALSE)  +  geom_label_repel(aes(label = PARTISAN), size = 3, max.overlaps = 20)
+cor(PartDens$EconSD, PartDens$SocSD)
 
-svg("party_sd.svg", width = 12, height = 8)
+#Position blurring 2D Density
+PartySD <- ggplot(PartDens, aes(EconSD, SocSD)) + stat_density2d(aes(alpha = ..density..), geom = "tile", contour = FALSE, show.legend = FALSE)  +  ggrepel::geom_label_repel(aes(label = PARTISAN), size = 3, max.overlaps = 20)
+
+svg("Figures/Blurring2D.svg", width = 12, height = 8)
 PartySD
 dev.off()
 

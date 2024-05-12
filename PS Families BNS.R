@@ -50,7 +50,7 @@ groups <- c("Sociocultural", "Sociocultural", "Sociocultural", "Sociocultural", 
 library(NetworkComparisonTest)
 library(qgraph)
 library(bootnet)
-library(RSVGTipsDevice)
+#library(RSVGTipsDevice)
 library(patchwork)
 
 RADRT <- ALL %>% filter(charfamily == "RADRT")
@@ -524,3 +524,153 @@ Main10 <- NCT(Network_RADRT, Network_CD,
 
 #Main10
 
+#####
+#Detailed plots for individual networks
+#####
+
+svg("Figures/CD.svg", width = 12, height = 6)
+plot(Network_CD, 
+     layout = net_layout,
+     title = "Christian Democracy",
+     title.cex = 1.5,
+     maximum = max_value,
+     groups = groups,
+     color = c("gray90", "gray50"),
+     negDashed = F,
+     edge.width = 2,
+     font = 1,
+     borders = F,
+     vsize = c(6, 6),
+     GLratio = 1,
+     legend = T,
+     posCol = "darkblue",
+     negCol = "darkred",
+     nodeNames = items,
+     legend.cex = 0.4)
+dev.off()
+
+svg("Figures/CON.svg", width = 12, height = 6)
+plot(Network_CON, 
+     layout = net_layout,
+     title = "Conservative",
+     title.cex = 1.5,
+     maximum = max_value,
+     groups = groups,
+     color = c("gray90", "gray50"),
+     negDashed = F,
+     edge.width = 2,
+     font = 1,
+     borders = F,
+     vsize = c(6, 6),
+     GLratio = 1,
+     legend = T,
+     posCol = "darkblue",
+     negCol = "darkred",
+     nodeNames = items,
+     legend.cex = 0.4)
+dev.off()
+
+svg("Figures/GREEN.svg", width = 12, height = 6)
+plot(Network_GREEN, 
+     layout = net_layout,
+     title = "Green",
+     title.cex = 1.5,
+     maximum = max_value,
+     groups = groups,
+     color = c("gray90", "gray50"),
+     negDashed = F,
+     edge.width = 2,
+     font = 1,
+     borders = F,
+     vsize = c(6, 6),
+     GLratio = 1,
+     legend = T,
+     posCol = "darkblue",
+     negCol = "darkred",
+     nodeNames = items,
+     legend.cex = 0.4)
+dev.off()
+
+svg("Figures/LIB.svg", width = 12, height = 6)
+plot(Network_LIB, 
+     layout = net_layout,
+     title = "Liberal",
+     title.cex = 1.5,
+     maximum = max_value,
+     groups = groups,
+     color = c("gray90", "gray50"),
+     negDashed = F,
+     edge.width = 2,
+     font = 1,
+     borders = F,
+     vsize = c(6, 6),
+     GLratio = 1,
+     legend = T,
+     posCol = "darkblue",
+     negCol = "darkred",
+     nodeNames = items,
+     legend.cex = 0.4)
+dev.off()
+
+svg("Figures/RADLEFT.svg", width = 12, height = 6)
+plot(Network_RADLEFT, 
+     layout = net_layout,
+     title = "Radical Left",
+     title.cex = 1.5,
+     maximum = max_value,
+     groups = groups,
+     color = c("gray90", "gray50"),
+     negDashed = F,
+     edge.width = 2,
+     font = 1,
+     borders = F,
+     vsize = c(6, 6),
+     GLratio = 1,
+     legend = T,
+     posCol = "darkblue",
+     negCol = "darkred",
+     nodeNames = items,
+     legend.cex = 0.4)
+dev.off()
+
+svg("Figures/RADRT.svg", width = 12, height = 6)
+plot(Network_RADRT, 
+     layout = net_layout,
+     title = "Radical Right",
+     title.cex = 1.5,
+     maximum = max_value,
+     groups = groups,
+     color = c("gray90", "gray50"),
+     negDashed = F,
+     edge.width = 2,
+     font = 1,
+     borders = F,
+     vsize = c(6, 6),
+     GLratio = 1,
+     legend = T,
+     posCol = "darkblue",
+     negCol = "darkred",
+     nodeNames = items,
+     legend.cex = 0.4)
+dev.off()
+
+svg("Figures/SOC.svg", width = 12, height = 6)
+plot(Network_SOC, 
+     layout = net_layout,
+     title = "Socialist",
+     title.cex = 1.5,
+     maximum = max_value,
+     groups = groups,
+     color = c("gray90", "gray50"),
+     negDashed = F,
+     edge.width = 2,
+     font = 1,
+     borders = F,
+     vsize = c(6, 6),
+     GLratio = 1,
+     legend = T,
+     posCol = "darkblue",
+     negCol = "darkred",
+     nodeNames = items,
+     legend.cex = 0.4)
+dev.off()
